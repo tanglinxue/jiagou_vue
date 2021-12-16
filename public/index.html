@@ -7,10 +7,16 @@
     <title>Document</title>
 </head>
 <body>
-    <script src='dist/umd/vue.js'></script>
+    <script src='/dist/umd/vue.js'></script>
     <script>
         let vm = new Vue({
-            el:'#app'
+            el:'#app',
+            data(){
+              return{
+                name:'唐林学',
+                age:11
+              }
+            }
         })
     </script>
 </body>
