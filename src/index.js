@@ -6,5 +6,5 @@ function Vue(options) {
 }
 
 // 通过引入文件的方式，给Vue原型上添加方法
-initMixin(Vue)
+initMixin(Vue) //给Vue原型上添加一个_init方法
 export default Vue

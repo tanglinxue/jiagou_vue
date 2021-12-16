@@ -14,7 +14,7 @@ export default {
       exclude: 'node_modules/**'
     }),
     process.env.ENV === 'development' ? serve({
-      // open: true,
+      open: true,
       openPage: '/public/index.html',
       port: 3000,
       contentBase: ''
