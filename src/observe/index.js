@@ -1,15 +1,16 @@
 // 把data中的数据 都使用Object.defineProperty重新定义 es5
 // Object.defineProperty 不能兼容ie8 及以下 vue2 无法兼容ie8版本
-import { isObject } from '../util/index.js'
+import { isObject, def } from '../util/index.js'
 import { arrayMethods } from './array.js'
 
 class Observer {
   constructor(value) {
     // vue如果数据的层次过多 需要递归的去解析对象中的属性，依次增加set和get方法
+    //我给每一个监控过得对象都增加一个__ob__属性
+    def(value, '__ob__', this)
     if (Array.isArray(value)) {
       // 如果是数组的话并不会对索引进行观测 因为会导致性能问题
       // 前端开发中很少很少 去操作索引 push shift unshift 
-
       value.__proto__ = arrayMethods
       // console.log(value.__proto__)
       // 如果数组里放的是对象我再监控

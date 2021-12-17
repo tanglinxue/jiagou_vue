@@ -50,6 +50,13 @@
   function isObject(data) {
     return _typeof(data) === 'object' && data !== null;
   }
+  function def(data, key, value) {
+    Object.defineProperty(data, key, {
+      enumerable: false,
+      configurable: false,
+      value: value
+    });
+  }
 
   // 我要重写数组的那些方法 7个 push shift unshift pop reverse sort splice 会导致数组本身发生变化
   // slice()
@@ -60,21 +67,35 @@
   var methods = ['push', 'shift', 'unshift', 'pop', 'sort', 'splice', 'reverse'];
   methods.forEach(function (method) {
     arrayMethods[method] = function () {
+      console.log('用户调用了push方法');
+
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
       }
 
-      console.log(args); //AOP 切片变成
+      var result = oldArrayMethods[method].apply(this, args); //调用原生的数组方法,AOP切片编程
+      // console.log(typeof result)
+      // push unshift 添加的元素可能还是一个对象
 
-      oldArrayMethods[method].apply(this, args); //调用原生的数组方法
+      var inserted; //当前用户插入的元素
+
+      var ob = this.__ob__;
 
       switch (method) {
         case 'push':
         case 'unshift':
+          inserted = args;
+          break;
 
         case 'splice':
-          args.slice(2);
+          inserted = args.slice(2);
       }
+
+      if (inserted) {
+        ob.observerArray(inserted); //将新增属性继续观测
+      }
+
+      return result;
     };
   });
 
@@ -83,6 +104,9 @@
       _classCallCheck(this, Observer);
 
       // vue如果数据的层次过多 需要递归的去解析对象中的属性，依次增加set和get方法
+      //我给每一个监控过得对象都增加一个__ob__属性
+      def(value, '__ob__', this);
+
       if (Array.isArray(value)) {
         // 如果是数组的话并不会对索引进行观测 因为会导致性能问题
         // 前端开发中很少很少 去操作索引 push shift unshift 
@@ -183,7 +207,7 @@
 
       vm.$options = options; //初始化状态
 
-      initState(vm);
+      initState(vm); // 如果用户传入了el属性，需要将页面渲染出来
     };
   }
 

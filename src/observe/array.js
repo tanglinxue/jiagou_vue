@@ -17,18 +17,25 @@ const methods = [
 
 methods.forEach(method => {
   arrayMethods[method] = function (...args) {
-    console.log(args) //AOP 切片变成
-    oldArrayMethods[method].apply(this, args) //调用原生的数组方法
+    console.log('用户调用了push方法')
+    const result = oldArrayMethods[method].apply(this, args) //调用原生的数组方法,AOP切片编程
+    // console.log(typeof result)
     // push unshift 添加的元素可能还是一个对象
     let inserted;//当前用户插入的元素
+    let ob = this.__ob__
     switch (method) {
       case 'push':
       case 'unshift':
         inserted = args
+        break
       case 'splice':
         inserted = args.slice(2)
       default:
         break
     }
+    if (inserted) {
+      ob.observerArray(inserted) //将新增属性继续观测
+    }
+    return result
   }
 })
