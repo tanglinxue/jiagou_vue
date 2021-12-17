@@ -199,6 +199,15 @@
     observe(data); // 响应式原理
   }
 
+  // ast语法树 是用对象来描述原生语法的   虚拟dom 用对象来描述dom节点的
+
+  var startTagClose = /^\s*(\/?)>/; // 匹配标签结束的 >  <div>
+  function compileToFunction(template) {
+    console.log(template);
+    console.log(new RegExp(startTagClose));
+    return function render() {};
+  }
+
   function initMixin(Vue) {
     // 初始化流程
     Vue.prototype._init = function (options) {
@@ -208,6 +217,30 @@
       vm.$options = options; //初始化状态
 
       initState(vm); // 如果用户传入了el属性，需要将页面渲染出来
+      // 如果用户传入了el 就要实现挂载流程
+
+      if (vm.$options.el) {
+        vm.$mount(vm.$options.el);
+      }
+    };
+
+    Vue.prototype.$mount = function (el) {
+      var vm = this;
+      var options = vm.$options;
+      el = document.querySelector(el); //默认会先查找有没有render方法，没有render会采用template，template也没有就用el中的内容
+
+      if (!options.render) {
+        // 对模板进行编译
+        var template = options.template;
+
+        if (!template && el) {
+          template = el.outerHTML;
+        } // 我们需要将template 转化成render方法 vue1.0 2.0虚拟dom
+
+
+        var render = compileToFunction(template);
+        options.render = render;
+      }
     };
   }
 
