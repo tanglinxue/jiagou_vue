@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
 </head>
+
 <body>
-    <div id='app'>heelo
-      <p>{{name}}</p>
-      <p>{{age}}</p>
-    </div>
-    <script src='/dist/umd/vue.js'></script>
-    <script>
-        let vm = new Vue({
-            el:'#app',
-            data(){
-              return{
-                name:'tang',
-                age:11
-              }
-            }
-        })
-    </script>
+  <div id='app' style='color:red;fontSize: 15px;'>
+    <p>hello {{name}}{{age}}aaa</p>
+    <p>{{age}}</p>
+  </div>
+  <script src='/dist/umd/vue.js'></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      data() {
+        return {
+          name: 'tang',
+          age: 11
+        }
+      }
+    })
+  </script>
 </body>
+
 </html>

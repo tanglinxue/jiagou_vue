@@ -42,6 +42,65 @@
     return Constructor;
   }
 
+  function _slicedToArray(arr, i) {
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+  }
+
+  function _arrayWithHoles(arr) {
+    if (Array.isArray(arr)) return arr;
+  }
+
+  function _iterableToArrayLimit(arr, i) {
+    var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+
+    if (_i == null) return;
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+
+    var _s, _e;
+
+    try {
+      for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"] != null) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+    return arr2;
+  }
+
+  function _nonIterableRest() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
   /**
    * 
    * @param {*} data 当前数据是不是对象
@@ -212,41 +271,76 @@
   var attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/; // 匹配属性的
 
   var startTagClose = /^\s*(\/?)>/; // 匹配标签结束的 >  <div>
+  var root = null; // ast语法树的树根
 
-  function start(tagName, attrs) {
-    console.log('开始标签：', tagName);
-    console.log('属性：', attrs);
+  var currentParent; // 标识当前父亲是谁
+
+  var stack = [];
+  var ELEMENT_TYPE = 1;
+  var TEXT_TYPE = 3;
+
+  function createASTElement(tagName, attrs) {
+    return {
+      tag: tagName,
+      type: ELEMENT_TYPE,
+      children: [],
+      attrs: attrs,
+      parent: null
+    };
   }
 
-  function chars(text) {
-    console.log('文本：', text);
+  function start(tagName, attrs) {
+    // 遇到开始标签 就创建一个ast元素s
+    var element = createASTElement(tagName, attrs);
+
+    if (!root) {
+      root = element;
+    }
+
+    currentParent = element; // 把当前元素标记成父ast树
+
+    stack.push(element); // 将开始标签存放到栈中
   }
 
   function end(tagName) {
-    console.log('结束标签:', tagName);
+    var element = stack.pop();
+    currentParent = stack[stack.length - 1];
+
+    if (currentParent) {
+      element.parent = currentParent;
+      currentParent.children.push(element);
+    }
+  }
+
+  function chars(text) {
+    text = text.replace(/\s/g, '');
+
+    if (text) {
+      currentParent.children.push({
+        text: text,
+        type: TEXT_TYPE
+      });
+    }
   }
 
   function parseHTML(html) {
-    // 不停的去解析html字符串
+    console.log(html);
+
     while (html) {
-      var textEnd = html.indexOf('<');
-      console.log(textEnd);
+      var textEnd = html.indexOf('<'); // console.log(textEnd)
 
       if (textEnd == 0) {
         // 如果当前索引为0 肯定是一个标签 开始标签 结束标签
         var startTagMatch = parseStartTag(); // 通过这个方法获取到匹配的结果 tagName,attrs
 
         if (startTagMatch) {
-          console.log('匹配开始');
-          start(startTagMatch.tagName, startTagMatch.attrs); // 1解析开始标签
-
-          continue; // 如果开始标签匹配完毕后 继续下一次 匹配
+          start(startTagMatch.tagName, startTagMatch.attrs);
+          continue;
         }
 
         var endTagMatch = html.match(endTag);
 
         if (endTagMatch) {
-          console.log('匹配结束');
           advance(endTagMatch[0].length);
           end(endTagMatch[1]);
           continue;
@@ -262,6 +356,7 @@
       if (text) {
         advance(text.length);
         chars(text);
+        continue;
       }
     }
 
@@ -297,10 +392,89 @@
         }
       }
     }
+
+    return root;
+  }
+
+  var defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g;
+
+  function genProps(attrs) {
+    var str = '';
+    attrs.forEach(function (item) {
+      if (item.name === 'style') {
+        var obj = {};
+        item.value.split(';').forEach(function (bitem) {
+          var _bitem$split = bitem.split(':'),
+              _bitem$split2 = _slicedToArray(_bitem$split, 2),
+              key = _bitem$split2[0],
+              value = _bitem$split2[1];
+
+          obj[key] = value;
+        });
+        item.value = obj;
+      }
+
+      str += "".concat(item.name, ":").concat(JSON.stringify(item.value), ",");
+    });
+    return "{".concat(str.slice(0, -1), "}");
+  }
+
+  function genChildren(el) {
+    var children = el.children;
+
+    if (children.length) {
+      return "".concat(children.map(function (c) {
+        return gen(c);
+      }).join(','));
+    } else {
+      return false;
+    }
+  }
+
+  function gen(node) {
+    if (node.type == 1) {
+      return generate(node);
+    } else {
+      var text = node.text;
+      var tokens = [];
+      var match, index;
+      var lastIndex = defaultTagRE.lastIndex = 0;
+      console.log(text);
+
+      while (match = defaultTagRE.exec(text)) {
+        index = match.index;
+        console.log(match);
+
+        if (index > lastIndex) {
+          tokens.push(JSON.stringify(text.slice(lastIndex, index)));
+        }
+
+        tokens.push("_s(".concat(match[1].trim(), ")"));
+        lastIndex = index + match[0].length;
+      }
+
+      if (lastIndex < text.length) {
+        tokens.push(JSON.stringify(text.slice(lastIndex)));
+      }
+
+      return "_v(".concat(tokens.join('+'), ")");
+    }
+  }
+
+  function generate(el) {
+    var children = genChildren(el);
+    var code = "_c(\"".concat(el.tag, "\",").concat(el.attrs.length ? genProps(el.attrs) : 'undefined').concat(children ? ",".concat(children) : '', ")");
+    return code;
   }
 
   function compileToFunction(template) {
-    parseHTML(template);
+    // 1) 解析html字符串 将html字符串 => ast语法树
+    var root = parseHTML(template); // console.log(root)
+    // 需要将ast语法树生成最终的render函数  就是字符串拼接 （模板引擎）
+
+    var code = generate(root);
+    console.log(code); // 核心思路就是将模板转化成 下面这段字符串
+
     return function render() {};
   }
 
