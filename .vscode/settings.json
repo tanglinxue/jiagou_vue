@@ -1,45 +1,29 @@
 {
   "workbench.colorTheme": "One Dark Pro",
-  "workbench.colorCustomizations": {
-
-  },
+  "workbench.colorCustomizations": {},
   "editor.acceptSuggestionOnCommitCharacter": false,
   "editor.tabSize": 2,
   "editor.useTabStops": true,
   "editor.detectIndentation": false,
   "emmet.triggerExpansionOnTab": true,
-  "editor.formatOnSave":true,
+  "editor.formatOnSave": true,
   "emmet.includeLanguages": {
-      "nvue": "html",
-      "nvue-html": "html",
-      "vue": "html",
-      "vue-html": "html",
-      "javascript": "javascript",
-      "docker": "dockerfile",
-      "wxml": "html"
+    "nvue": "html",
+    "nvue-html": "html",
+    "vue": "html",
+    "vue-html": "html",
+    "javascript": "javascript",
+    "docker": "dockerfile",
+    "wxml": "html"
   },
   "emmet.syntaxProfiles": {
-      "vue": [
-          "css",
-          "less",
-          "html"
-      ],
-      "nvue": [
-          "css",
-          "less",
-          "html"
-      ]
+    "vue": ["css", "less", "html"],
+    "nvue": ["css", "less", "html"]
   },
   "eslint.alwaysShowStatus": true,
 
   "eslint.options": {
-      "extensions": [
-          ".ts",
-          ".js",
-          ".vue",
-          ".nvue",
-          ".json"
-      ]
+    "extensions": [".ts", ".js", ".vue", ".nvue", ".json"]
   },
   "eslint.validate": [
     "javascript",
@@ -47,89 +31,90 @@
     "html",
     "vue",
     {
-        "language": "html",
-        "autoFix": true
+      "language": "html",
+      "autoFix": true
     },
     {
-        "language": "vue",
-        "autoFix": true
+      "language": "vue",
+      "autoFix": true
     }
   ],
   // 保存自动修复
-"eslint.autoFixOnSave": true,
+  "eslint.autoFixOnSave": true,
   "files.associations": {
-      "*.ejs": "html",
-      "*.wxml": "html",
-      "*.js": "javascript",
-      "*.ts": "javascript",
-      "*.json": "json",
-      "*.vue": "vue",
-      "*.nvue": "vue",
-      "*.less": "less",
-      "*.cjson": "jsonc",
-      "*.wxss": "css",
-      "*.wxs": "javascript"
+    "*.ejs": "html",
+    "*.wxml": "html",
+    "*.js": "javascript",
+    "*.ts": "javascript",
+    "*.json": "json",
+    "*.vue": "vue",
+    "*.nvue": "vue",
+    "*.less": "less",
+    "*.cjson": "jsonc",
+    "*.wxss": "css",
+    "*.wxs": "javascript"
   },
   "files.insertFinalNewline": true,
   "typescript.check.npmIsInstalled": false,
   "editor.renderWhitespace": "all",
   "vetur.validation.template": false,
   "vetur.format.defaultFormatterOptions": {
-      "prettier": {
-          "semi": true,
-          "singleQuote": true
-      }
+    "prettier": {
+      "semi": true,
+      "singleQuote": true
+    }
   },
   "prettier.singleQuote": true,
   "prettier.semi": true,
   "git.autofetch": true,
   "minapp-vscode.disableAutoConfig": true,
-  "window.zoomLevel": 2,
+  "window.zoomLevel": 1,
   "editor.fontSize": 14,
   "javascript.preferences.quoteStyle": "single",
   "javascript.updateImportsOnFileMove.enabled": "never",
   "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
+    "source.fixAll.eslint": true
   },
   "editor.suggestSelection": "first",
   "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
   "java.configuration.checkProjectSettingsExclusions": false,
   "java.project.importOnFirstTimeStartup": "automatic",
   "java.semanticHighlighting.enabled": true,
-  "rsp-ui.enableStartServerOnActivation": [{
+  "rsp-ui.enableStartServerOnActivation": [
+    {
       "id": "redhat.vscode-community-server-connector",
       "name": "Community Server Connector",
       "startOnActivation": true
-  }],
+    }
+  ],
   "eslint.codeAction.showDocumentation": {
-      "enable": true
+    "enable": true
   },
   "auto-close-tag.activationOnLanguage": [
-
-      "xml",
-      "php",
-      "blade",
-      "ejs",
-      "jinja",
-      "javascript",
-      "javascriptreact",
-      "typescript",
-      "typescriptreact",
-      "plaintext",
-      "markdown",
-      "vue",
-      "nvue",
-      "liquid",
-      "erb",
-      "lang-cfml",
-      "cfml",
-      "HTML (EEx)",
-      "HTML (Eex)",
-      "plist"
+    "xml",
+    "php",
+    "blade",
+    "ejs",
+    "jinja",
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "plaintext",
+    "markdown",
+    "vue",
+    "nvue",
+    "liquid",
+    "erb",
+    "lang-cfml",
+    "cfml",
+    "HTML (EEx)",
+    "HTML (Eex)",
+    "plist"
   ],
   "npm.exclude": "",
   "[javascript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
-  "vetur.format.defaultFormatter.js": "prettier",
+  "vetur.format.defaultFormatter.js": "prettier"
 }

@@ -1,4 +1,5 @@
 import { observe } from './observe/index.js'
+import { proxy } from './util/index.js'
 export function initState(vm) {
   const opts = vm.$options
   // vue的数据来源 属性 方法 数据 计算属性 watch
@@ -23,6 +24,7 @@ function initProps() { }
 
 function initMethod() { }
 
+
 function initData(vm) {
   // 初始化数据
   let data = vm.$options.data //用户传递的data
@@ -30,6 +32,9 @@ function initData(vm) {
   // 对象劫持 用户改变了数据 我希望可以得到通知 => 刷新页面
   // MVVM 数据变化可以驱动视图变化
   // Object.defineProperty() 给属性增加get方法和set方法
+  for (let key in data) {
+    proxy(vm, '_data', key)
+  }
   observe(data)  // 响应式原理
 }
 

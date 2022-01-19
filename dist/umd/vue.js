@@ -116,6 +116,16 @@
       value: value
     });
   }
+  function proxy(vm, source, key) {
+    Object.defineProperty(vm, key, {
+      get: function get() {
+        return vm[source][key];
+      },
+      set: function set(newValue) {
+        vm[source][key] = newValue;
+      }
+    });
+  }
 
   // 我要重写数组的那些方法 7个 push shift unshift pop reverse sort splice 会导致数组本身发生变化
   // slice()
@@ -255,6 +265,10 @@
     // MVVM 数据变化可以驱动视图变化
     // Object.defineProperty() 给属性增加get方法和set方法
 
+    for (var key in data) {
+      proxy(vm, '_data', key);
+    }
+
     observe(data); // 响应式原理
   }
 
@@ -324,8 +338,6 @@
   }
 
   function parseHTML(html) {
-    console.log(html);
-
     while (html) {
       var textEnd = html.indexOf('<'); // console.log(textEnd)
 
@@ -438,12 +450,10 @@
       var text = node.text;
       var tokens = [];
       var match, index;
-      var lastIndex = defaultTagRE.lastIndex = 0;
-      console.log(text);
+      var lastIndex = defaultTagRE.lastIndex = 0; // console.log(text)
 
       while (match = defaultTagRE.exec(text)) {
-        index = match.index;
-        console.log(match);
+        index = match.index; //console.log(match)
 
         if (index > lastIndex) {
           tokens.push(JSON.stringify(text.slice(lastIndex, index)));
@@ -472,10 +482,31 @@
     var root = parseHTML(template); // console.log(root)
     // 需要将ast语法树生成最终的render函数  就是字符串拼接 （模板引擎）
 
-    var code = generate(root);
-    console.log(code); // 核心思路就是将模板转化成 下面这段字符串
+    var code = generate(root); // console.log(code)
+    // 所有的模板引擎实现 都需要new Function + with
 
-    return function render() {};
+    var renderFn = new Function("with(this){ return ".concat(code, "}")); // console.log(renderFn)
+    // 核心思路就是将模板转化成 下面这段字符串
+    // vue的render 他返回的是虚拟dom
+
+    return renderFn;
+  }
+
+  function mountComponent(vm, el) {
+    var options = vm.$options;
+    vm.$el = el; // 真实的dom元素
+
+    console.log(options, vm.$el); //渲染页面
+
+    var updateComponent = function updateComponent() {
+      // 无论是渲染还是更新都会调用此方法
+      // vm._render 通过解析的render方法 渲染出虚拟dom _c _v _s
+      // vm._update 通过虚拟dom 创建真实的dom  
+      vm.update(vm._render());
+    }; // 渲染watcher 每个组件都有一个watcher   
+
+
+    new Watcher(vm, updateComponent, function () {}, true); // true表示他是一个渲染watcher
   }
 
   function initMixin(Vue) {
@@ -510,8 +541,15 @@
 
         var render = compileToFunction(template);
         options.render = render;
-      }
+      } // 渲染当前的组件 挂载这个组件
+
+
+      mountComponent(vm, el);
     };
+  }
+
+  function renderMixin(Vue) {
+    Vue.prototype._render = function () {};
   }
 
   // Vue的核心代码,只是Vue的一个声明
@@ -523,6 +561,8 @@
 
 
   initMixin(Vue); //给Vue原型上添加一个_init方法
+
+  renderMixin(Vue);
 
   return Vue;
 

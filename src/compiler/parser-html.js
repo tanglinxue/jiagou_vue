@@ -54,7 +54,6 @@ function chars(text) {
 }
 
 export function parseHTML(html) {
-  console.log(html)
   while (html) {
     let textEnd = html.indexOf('<')
     // console.log(textEnd)
