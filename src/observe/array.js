@@ -36,6 +36,7 @@ methods.forEach(method => {
     if (inserted) {
       ob.observerArray(inserted) //将新增属性继续观测
     }
+    ob.dep.notify() //如果用户调用了Push方法，我会通知更新操作
     return result
   }
 })
