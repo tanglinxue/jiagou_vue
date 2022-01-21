@@ -669,25 +669,39 @@
     return renderFn;
   }
 
+  var callbacks = [];
+  var state = false;
+  function nextTick(cb) {
+    callbacks.push(cb);
+    if (state) return;
+    state = true;
+    setTimeout(function () {
+      console.log(callbacks);
+      callbacks.forEach(function (cb) {
+        return cb();
+      });
+      state = false;
+    }, 0);
+  }
+
   var queue = [];
   var has = {};
+
+  function flushSchedularQueue() {
+    queue.forEach(function (watcher) {
+      return watcher.run();
+    });
+    queue = [];
+    has = {};
+  }
+
   function queueWatcher(watcher) {
-    console.log(queue);
     var id = watcher.id;
-    console.log(id);
-    console.log(has[id]);
 
     if (has[id] == null) {
       queue.push(watcher);
       has[id] = true;
-      console.log(queue);
-      setTimeout(function () {
-        queue.forEach(function (watcher) {
-          return watcher.run();
-        });
-        queue = [];
-        has = {};
-      }, 0);
+      nextTick(flushSchedularQueue);
     }
   }
 
@@ -888,7 +902,10 @@
 
 
       mountComponent(vm, el);
-    };
+    }; // 用户调用的nextTick
+
+
+    Vue.prototype.$nextTick = nextTick;
   }
 
   function createElement(tag) {

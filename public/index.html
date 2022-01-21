@@ -52,15 +52,13 @@
       // }
     })
 
-    setTimeout(() => {
-      // vm.test = 222
-      // vm.test = 333
-      vm.arr.push(4)
-      vm.arr.push(5)
-      vm.arr.push(6)
-      // vm._update(vm._render())
-    },
-      1000)
+    vm.arr.push(4)
+    vm.arr.push(5)
+    vm.arr.push(6)
+
+    vm.$nextTick(() => {
+      console.log(vm.$el.innerHTML)
+    })
   </script>
 </body>
 

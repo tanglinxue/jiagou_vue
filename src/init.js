@@ -2,6 +2,7 @@ import { initState } from './state'
 import { compileToFunction } from './compiler/index.js'
 import { mountComponent, callHook } from './lifycycle'
 import { mergeOptions } from './util/index'
+import { nextTick } from './util/next-tick'
 // 在原型上添加一个Init方法
 export function initMixin(Vue) {
   // 初始化流程
@@ -45,4 +46,6 @@ export function initMixin(Vue) {
     // 渲染当前的组件 挂载这个组件
     mountComponent(vm, el)
   }
+  // 用户调用的nextTick
+  Vue.prototype.$nextTick = nextTick
 }
