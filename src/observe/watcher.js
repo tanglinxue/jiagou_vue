@@ -1,9 +1,9 @@
 import { pushTarget, popTarget } from './dep.js'
+import { queueWatcher } from './schedular'
 let id = 0
 
 class Watcher {
   constructor(vm, exprOrFn, callback, options) {
-    console.log('来了一次watcher')
     // fn(vm)
     this.vm = vm;
     this.callback = callback;
@@ -20,7 +20,7 @@ class Watcher {
     if (!this.depsId.has(id)) {
       this.depsId.add(id)
       this.deps.push(dep)
-      console.log(this.deps)
+      //console.log(this.deps)
       dep.addSub(this)
     }
   }
@@ -30,7 +30,15 @@ class Watcher {
     popTarget()//移除watcher
   }
   update() {
-    console.log('更新了几次模板')
+    // 渲染了
+    queueWatcher(this)
+
+    // console.log('渲染更新')
+    // console.log(this.id)
+    // this.get()
+  }
+  run() {
+    console.log('渲染了')
     this.get()
   }
 }

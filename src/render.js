@@ -14,9 +14,7 @@ export function renderMixin(Vue) {
   }
   Vue.prototype._render = function () {
     const vm = this;
-    console.log('渲染')
     const { render } = vm.$options;
-    console.log(render)
     return render.call(vm)
   }
 }

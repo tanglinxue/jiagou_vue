@@ -1,5 +1,4 @@
 let id = 0
-console.log('来了一次Dep')
 class Dep {
   constructor() {
     this.id = id++

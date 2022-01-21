@@ -160,8 +160,6 @@
    * @returns 
    */
   function isObject(data) {
-    console.log('数据');
-    console.log(data);
     return _typeof(data) === 'object' && data !== null;
   }
   function def(data, key, value) {
@@ -273,7 +271,6 @@
   });
 
   var id$1 = 0;
-  console.log('来了一次Dep');
 
   var Dep = /*#__PURE__*/function () {
     function Dep() {
@@ -672,14 +669,35 @@
     return renderFn;
   }
 
+  var queue = [];
+  var has = {};
+  function queueWatcher(watcher) {
+    console.log(queue);
+    var id = watcher.id;
+    console.log(id);
+    console.log(has[id]);
+
+    if (has[id] == null) {
+      queue.push(watcher);
+      has[id] = true;
+      console.log(queue);
+      setTimeout(function () {
+        queue.forEach(function (watcher) {
+          return watcher.run();
+        });
+        queue = [];
+        has = {};
+      }, 0);
+    }
+  }
+
   var id = 0;
 
   var Watcher = /*#__PURE__*/function () {
     function Watcher(vm, exprOrFn, callback, options) {
       _classCallCheck(this, Watcher);
 
-      console.log('来了一次watcher'); // fn(vm)
-
+      // fn(vm)
       this.vm = vm;
       this.callback = callback;
       this.options = options;
@@ -699,8 +717,8 @@
 
         if (!this.depsId.has(id)) {
           this.depsId.add(id);
-          this.deps.push(dep);
-          console.log(this.deps);
+          this.deps.push(dep); //console.log(this.deps)
+
           dep.addSub(this);
         }
       }
@@ -716,7 +734,15 @@
     }, {
       key: "update",
       value: function update() {
-        console.log('更新了几次模板');
+        // 渲染了
+        queueWatcher(this); // console.log('渲染更新')
+        // console.log(this.id)
+        // this.get()
+      }
+    }, {
+      key: "run",
+      value: function run() {
+        console.log('渲染了');
         this.get();
       }
     }]);
@@ -917,9 +943,7 @@
 
     Vue.prototype._render = function () {
       var vm = this;
-      console.log('渲染');
       var render = vm.$options.render;
-      console.log(render);
       return render.call(vm);
     };
   }

@@ -4,8 +4,7 @@
  * @returns 
  */
 export function isObject(data) {
-  console.log('数据')
-  console.log(data)
+
   return typeof data === 'object' && data !== null
 }
 

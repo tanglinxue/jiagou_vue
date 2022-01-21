@@ -21,6 +21,7 @@ export function mountComponent(vm, el) {
   let updateComponent = () => { // 无论是渲染还是更新都会调用此方法
     // vm._render 通过解析的render方法 渲染出虚拟dom _c _v _s
     // vm._update 通过虚拟dom 创建真实的dom  
+
     vm._update(vm._render())
   }
 
